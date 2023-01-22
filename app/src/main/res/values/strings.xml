@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">PokeMaper</string>
+    <string name="Email">Email</string>
+    <string name="Password">Password</string>
+    <string name="Login">Login</string>
+    <string name="Register">Register</string>
+    <string name="First_Name">First name</string>
+    <string name="Last_Name">Last name</string>
+    <string name="log_out">logout</string>
+</resources>
