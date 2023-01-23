@@ -27,7 +27,7 @@ import be.ehb.pokemaper.Fragment.MapsFragment;
 import be.ehb.pokemaper.Fragment.PokemonFragment;
 import be.ehb.pokemaper.Fragment.RaidFragment;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MainActivity extends AppCompatActivity {
 
     public FloatingActionButton addPokemon;
     private FirebaseAuth mAuth;
@@ -49,9 +49,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 signOut();
             }
         });
-
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        mapFragment.getMapAsync(this);
+        
 
         BottomNavigationView nav_bottom = findViewById(R.id.bottomNav);
         getSupportFragmentManager().beginTransaction().replace(R.id.main_container,new MapsFragment()).commit();
@@ -84,35 +82,5 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    @Override
-    public void onMapReady(@NonNull GoogleMap googleMap) {
 
-        mGoogleMap = googleMap;
-        mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
-        LatLng coordGrûteMet =  new LatLng(50.846777, 4.352360);
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(coordGrûteMet, 15);
-        mGoogleMap.animateCamera(cameraUpdate);
-
-        drawAnnotations();
-
-        mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(@NonNull LatLng latLng) {
-                Toast.makeText(getApplicationContext(),"Lat =" + latLng.latitude + " long = " + latLng.longitude, Toast.LENGTH_LONG).show();
-            }
-        });
-
-
-    }
-
-    private void drawAnnotations() {
-        LatLng coordGrûteMet =  new LatLng(50.846777, 4.352360);
-
-        mGoogleMap.addMarker(new MarkerOptions()
-                .position(coordGrûteMet)
-                .title("Grote Markt")
-                .icon(BitmapDescriptorFactory.defaultMarker())
-        );
-    }
 }
