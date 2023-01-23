@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navPokemon"
+        android:title="@string/nav_pokemon" />
+    <item
+        android:id="@+id/navRaids"
+        android:title="@string/nav_raids" />
+
+    <item
+        android:id="@+id/navMaps"
+        android:title="@string/show_map" />
+</menu>

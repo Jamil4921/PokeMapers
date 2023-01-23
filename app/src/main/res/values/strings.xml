@@ -7,4 +7,7 @@
     <string name="First_Name">First name</string>
     <string name="Last_Name">Last name</string>
     <string name="log_out">logout</string>
+    <string name="nav_pokemon">all pokemons</string>
+    <string name="nav_raids">All raids</string>
+    <string name="show_map">Map</string>
 </resources>
