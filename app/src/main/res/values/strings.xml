@@ -10,4 +10,9 @@
     <string name="nav_pokemon">all pokemons</string>
     <string name="nav_raids">All raids</string>
     <string name="show_map">Map</string>
+    <string name="All_Pokemon">All pokemon spotting</string>
+    <string name="What_pokemon">What Pokemon did you see in this area</string>
+    <string name="Pokemon_name">Pokemon</string>
+    <string name="Add_Pokemon">Add pokemo,</string>
+    <string name="add_Pokemon">Add Pokemon</string>
 </resources>

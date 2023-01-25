@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     public FloatingActionButton addPokemon;
     private FirebaseAuth mAuth;
     private GoogleMap mGoogleMap;
+    private static final int REQUEST_LOCATION_PERMISSION = 69;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
 
     }
+
+
 
 
 }
