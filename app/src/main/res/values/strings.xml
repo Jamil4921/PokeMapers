@@ -15,4 +15,11 @@
     <string name="Pokemon_name">Pokemon</string>
     <string name="Add_Pokemon">Add pokemo,</string>
     <string name="add_Pokemon">Add Pokemon</string>
+    <string name="Location">Location</string>
+    <string name="Address">Address</string>
+    <string name="what_raid">Post raid</string>
+    <string name="Raid_lvl">Raid Level</string>
+    <string name="Trainer_code">Trainer Code</string>
+    <string name="add_raid">Add Raid</string>
+    <string name="cancel">Cancel</string>
 </resources>

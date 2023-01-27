@@ -28,10 +28,13 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         TextView pokemonName;
+        TextView pokemonLocation;
+        TextView pokemonAddress;
         public ViewHolder(View view){
             super(view);
-
+            pokemonLocation = view.findViewById(R.id.rv_location);
             pokemonName = view.findViewById(R.id.rv_pokemonName);
+            pokemonAddress = view.findViewById(R.id.rv_address);
 
         }
 
@@ -49,6 +52,9 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position){
         Pokemon pokemons = pokemonList.get(position);
         holder.pokemonName.setText(pokemons.getPokemon());
+        holder.pokemonLocation.setText(Double.toString(pokemons.getLati())+","+Double.toString(pokemons.getLongti()));
+        holder.pokemonAddress.setText(pokemons.getAddress());
+
 
     }
 

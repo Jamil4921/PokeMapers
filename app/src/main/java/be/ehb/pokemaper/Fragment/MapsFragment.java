@@ -1,12 +1,19 @@
 package be.ehb.pokemaper.Fragment;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import androidx.annotation.NonNull;
@@ -23,17 +30,22 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
+import java.util.Objects;
 
 import be.ehb.pokemaper.DataBase.Database;
 import be.ehb.pokemaper.Pokemon;
 import be.ehb.pokemaper.R;
+import be.ehb.pokemaper.Raid;
 import be.ehb.pokemaper.ViewModel.PokemonViewModel;
 import be.ehb.pokemaper.databinding.FragmentMapBinding;
 import be.ehb.pokemaper.databinding.FragmentPokemonBinding;
@@ -48,16 +60,6 @@ public class MapsFragment extends Fragment {
     private FusedLocationProviderClient fusedLocationClient;
 
 
-
-    private void drawAnnotations() {
-        LatLng coordGrûteMet =  new LatLng(50.846777, 4.352360);
-
-        mGoogleMap.addMarker(new MarkerOptions()
-                .position(coordGrûteMet)
-                .title("Grote Markt")
-                .icon(BitmapDescriptorFactory.defaultMarker())
-        );
-    }
     @Override
     public View onCreateView(
 
@@ -80,14 +82,41 @@ public class MapsFragment extends Fragment {
                 database.getAllPokemon().observe(getViewLifecycleOwner(), new Observer<List<Pokemon>>() {
                     @Override
                     public void onChanged(List<Pokemon> pokemonList) {
-                        for(Pokemon pokemon : pokemonList){
-                            googleMap.addMarker(new MarkerOptions().position(new LatLng(pokemon.getLati(),pokemon.getLongti())).title("Pokemon spotting : " + pokemon.getPokemon()));
+                        for (Pokemon pokemon : pokemonList) {
+
+                            googleMap.addMarker(new MarkerOptions().position(new LatLng(pokemon.getLati(), pokemon.getLongti())).title("Pokemon spotting : " + pokemon.getPokemon()).icon(pokeBall(getActivity(), R.drawable.ic_baseline_catching_pokemon_24)));
                         }
+
+
                     }
                 });
+
+
             }
+
+
         });
 
+        supportMapFragment.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull GoogleMap googleMap) {
+                database.getAllRaids().observe(getViewLifecycleOwner(), new Observer<List<Raid>>() {
+                    @Override
+                    public void onChanged(List<Raid> raidList) {
+                        for(Raid raid : raidList){
+                            googleMap.addMarker(new MarkerOptions().position(new LatLng(raid.getLati(),raid.getLongti())).title("Raid Spotting : " + raid.getPokemon()).snippet("Raid level : " + raid.getRaidLevel() + " Trainer Code : " + raid.getTrainerCode()).icon(pokeBall(getActivity(),R.drawable.ic_baseline_fort_24)));
+
+                        }
+                    }
+
+
+                });
+            }
+
+
+
+
+        });
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 69;
             ActivityCompat.requestPermissions(getActivity(),
@@ -98,6 +127,17 @@ public class MapsFragment extends Fragment {
 
 
 
+
+
+    }
+
+    private BitmapDescriptor pokeBall(Context context, int vectorId){
+        Drawable vectorDrawble = ContextCompat.getDrawable(context, vectorId);
+        vectorDrawble.setBounds(0,0,vectorDrawble.getIntrinsicWidth(), vectorDrawble.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawble.getIntrinsicWidth(),vectorDrawble.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawble.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
     @Override

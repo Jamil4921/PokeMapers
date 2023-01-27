@@ -1,15 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/raid_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#BA68C8">
+    android:background="@color/Raid_color">
 
-    <TextView
-        android:id="@+id/textView2"
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_raidList"
+        android:layout_width="378dp"
+        android:layout_height="625dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_add_raid"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:listitem="@layout/adapter_raid" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_add_raid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/nav_raids"
-        tools:layout_editor_absoluteX="159dp"
-        tools:layout_editor_absoluteY="304dp" />
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="70dp"
+        android:clickable="true"
+        app:backgroundTint="@color/teal_200"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@android:drawable/ic_input_add"
+        tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+

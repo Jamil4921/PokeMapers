@@ -1,16 +1,11 @@
 package be.ehb.pokemaper.Fragment;
 
-import static androidx.constraintlayout.motion.widget.Debug.getLocation;
-
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,11 +22,9 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -40,43 +32,35 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
-import be.ehb.pokemaper.CustomLatlng;
 import be.ehb.pokemaper.MainActivity;
-import be.ehb.pokemaper.Pokemon;
 import be.ehb.pokemaper.R;
-import be.ehb.pokemaper.databinding.FragmentAddPokemonBinding;
-import be.ehb.pokemaper.databinding.FragmentPokemonBinding;
+import be.ehb.pokemaper.Raid;
+import be.ehb.pokemaper.databinding.FragmentAddRaidBinding;
 
-public class AddPokemonFragment extends Fragment {
-
-    private FragmentAddPokemonBinding binding;
+public class AddRaidFragment extends Fragment {
+    private FragmentAddRaidBinding binding;
     FusedLocationProviderClient fusedLocationProviderClient;
-    PokemonFragment pokemonFragment = new PokemonFragment();
     private final static int REQUEST_CODE = 100;
     DatabaseReference databaseReference;
-    EditText editText_Pokemon_name;
-    Button btn_addPokemon;
-    Button btn_cancel;
-    private double latitude, longitude;
-
+    EditText editText_PokemonName, editText_RaidLevel, editText_TrainerCode;
+    Button btn_addRaid, btn_raidCancel;
     private String address;
-    private CustomLatlng locations;
+    private double latitude, longitude;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = FragmentAddPokemonBinding.inflate(inflater, container, false);
+        binding = FragmentAddRaidBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-        editText_Pokemon_name = root.findViewById(R.id.et_pokemonName);
-
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Pokemons");
-
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("Raids");
+        editText_PokemonName = root.findViewById(R.id.et_pokemonNameRaid);
+        editText_RaidLevel = root.findViewById(R.id.et_raidLevel);
+        editText_TrainerCode = root.findViewById(R.id.et_TrainerCode);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext());
-        btn_cancel = root.findViewById(R.id.btn_pokemon_cancel);
-        btn_cancel.setOnClickListener(new View.OnClickListener() {
+
+        btn_raidCancel = root.findViewById(R.id.btn_raid_cancel);
+        btn_raidCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), MainActivity.class);
@@ -84,18 +68,16 @@ public class AddPokemonFragment extends Fragment {
             }
         });
 
-        btn_addPokemon = root.findViewById(R.id.btn_addPokemon);
-        btn_addPokemon.setOnClickListener(new View.OnClickListener() {
+        btn_addRaid = root.findViewById(R.id.btn_addRaid);
+        btn_addRaid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                insertPokemonData();
+                insertRaid();
             }
         });
-
-
         return root;
     }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -103,66 +85,79 @@ public class AddPokemonFragment extends Fragment {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
         }
     }
-    private void insertPokemonData() {
-        String pokemonName = editText_Pokemon_name.getText().toString().trim();
 
-        if (pokemonName.isEmpty()) {
-            editText_Pokemon_name.setError("Please fill in pokemon name");
-            editText_Pokemon_name.requestFocus();
+    private void insertRaid() {
+        String pokemonName = editText_PokemonName.getText().toString().trim();
+        String raidLevel = editText_RaidLevel.getText().toString().trim();
+        String trainerCode = editText_TrainerCode.getText().toString().trim();
+
+        if(pokemonName.isEmpty()){
+            editText_PokemonName.setError("Please fill in pokemon name");
+            editText_PokemonName.requestFocus();
             return;
         }
 
-        if (pokemonName.length() < 2) {
-            editText_Pokemon_name.setError("Pokemon name must be longer then 2 char");
-            editText_Pokemon_name.requestFocus();
+        if(pokemonName.length() < 2){
+            editText_PokemonName.setError("Pokemon mane must be longer the 2 char ");
+            editText_PokemonName.requestFocus();
             return;
         }
 
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if(raidLevel.isEmpty()){
+            editText_RaidLevel.setError("Raid level cannot be empty");
+            editText_RaidLevel.requestFocus();
+            return;
+        }
+
+        if(trainerCode.isEmpty()){
+            editText_TrainerCode.setError("Trainercode cannot be empty");
+            editText_TrainerCode.requestFocus();
+            return;
+        }
+
+        if(trainerCode.length() > 12){
+            editText_TrainerCode.setError("Trainercode cannot be longer then 12 char");
+            editText_TrainerCode.requestFocus();
+            return;
+        }
+
+        if(ContextCompat.checkSelfPermission(requireContext(),Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
-                    if (location != null) {
+                    if(location !=null){
                         askPermission();
                         Log.d("Location", "Latitude: " + location.getLatitude() + ", Longitude: " + location.getLongitude());
                         Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
                         try {
-                            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(),1);
+                            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
                             address = addresses.get(0).getAddressLine(0).toString();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-
-
-                        Pokemon pokemon = new Pokemon(pokemonName, location.getLatitude(), location.getLongitude(), address);
+                        Raid raid = new Raid(pokemonName,raidLevel,location.getLatitude(),location.getLongitude(),trainerCode,address);
                         String key = databaseReference.push().getKey();
-                        databaseReference.child(key).setValue(pokemon);
-                        Toast.makeText(requireContext(), "Pokemon added", Toast.LENGTH_SHORT).show();
-                        editText_Pokemon_name.setText("");
+                        databaseReference.child(key).setValue(raid);
+                        Toast.makeText(requireContext(),"Raid Added",Toast.LENGTH_LONG).show();
+                        editText_PokemonName.setText("");
+                        editText_RaidLevel.setText("");
+                        editText_TrainerCode.setText("");
                         FragmentManager fragmentManager = getFragmentManager();
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.replace(R.id.pokemon_container, new PokemonFragment());
+                        fragmentTransaction.replace(R.id.raid_container,new RaidFragment());
                         fragmentTransaction.commit();
+
                     }
                 }
             });
-        } else {
+        }else {
             ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
         }
     }
+
     private void askPermission() {
         ActivityCompat.requestPermissions(requireActivity(),new String[]
                 {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
-    }
-
-    private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted, request it
-            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
-        } else {
-            // Permission has already been granted, proceed with getting location
-            getLocation();
-        }
     }
 
     @Override
