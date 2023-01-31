@@ -29,3 +29,7 @@ https://firebase.google.com
 For this project i also used Google Cloud services to be able to use Google maps including all its dependencies
 https://console.cloud.google.com
 
+For this project i followed "Gadgets and Technical field Android Tech" to be able to use drawble icons as markers on my google maps
+How to add Custom Marker in Google maps in Android
+https://youtu.be/26bl4r3VtGQ
+
